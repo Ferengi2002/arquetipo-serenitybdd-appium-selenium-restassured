@@ -27,7 +27,7 @@ import static io.cucumber.core.options.Constants.*;
 
 @ConfigurationParameter(
         key = FILTER_TAGS_PROPERTY_NAME,
-        value = "@ejemploMovil" // puedes cambiarlo por el tag que quieras ejecutar
+        value = "@demoqa" // puedes cambiarlo por el tag que quieras ejecutar
 )
 
 public class CucumberTestSuite {

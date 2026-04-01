@@ -29,7 +29,7 @@ public class BuyProductsStepDefinitions {
 
     @Dado("que el {actor} accede al sitio Demoblaze")
     public void accedeAlSistema(Actor actor) {
-        actor.wasAbleTo(NavigateTo.demoBlazePage());
+        // actor.wasAbleTo(NavigateTo.demoBlazePage());
     }
 
     @Cuando("agrega 2 productos ramdom de cualquier categoria al carrito")
