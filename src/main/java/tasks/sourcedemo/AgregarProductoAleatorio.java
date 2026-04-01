@@ -17,13 +17,15 @@ public class AgregarProductoAleatorio implements Task {
 
     @Override
     public <T extends Actor> void performAs(T actor) {
-        // 1. Capturamos TODOS los botones de "Add to cart" que hay en la pantalla
+        // Obtenemos los botones y el índice
         List<WebElementFacade> botonesAgregar = InterfacesUI.BTN_ADD_TO_CART.resolveAllFor(actor);
-
-        // 2. Usamos tu generador para sacar un número entre 0 y el total de botones menos 1
         int indiceAleatorio = GeneradorAleatorio.numeroEntre(0, botonesAgregar.size() - 1);
 
-        // 3. Hacemos clic en el botón que salió sorteado
-        botonesAgregar.get(indiceAleatorio).click();
+        // Creamos la mini-tarea para que aparezca en el reporte
+        actor.attemptsTo(
+                Task.where("{0} hace clic en el botón 'Add to cart' para agregar el producto",
+                        a -> botonesAgregar.get(indiceAleatorio).click()
+                )
+        );
     }
 }

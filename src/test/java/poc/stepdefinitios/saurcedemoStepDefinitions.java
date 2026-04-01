@@ -12,6 +12,7 @@ import net.serenitybdd.screenplay.actors.OnlineCast;
 import net.thucydides.core.webdriver.ThucydidesWebDriverSupport;
 import tasks.sourcedemo.AccederSistema;
 import tasks.sourcedemo.AgregarProductoAleatorio;
+import tasks.sourcedemo.ValidarInterfaz;
 import tasks.web.NavigateTo;
 import userinterfaces.saucedemo.InterfacesUI;
 
@@ -41,23 +42,8 @@ public class saurcedemoStepDefinitions {
 
     @Entonces("validar que haya accedido correctamente al sistema")
     public void validarQueHayaAccedidoCorrectamenteAlSistema() {
-        Actor actor = theActorInTheSpotlight();
-
-        // 1. Validar la URL actual (usando el driver de Serenity)
-        String urlActual = ThucydidesWebDriverSupport.getDriver().getCurrentUrl();
-        assertEquals("https://www.saucedemo.com/inventory.html", urlActual);
-
-        // 2. Validar el logo de la empresa usando la estructura que pediste
-        // Usamos .isVisible() en lugar de .getText() porque un logo normalmente no tiene texto visible
-        boolean logoVisible = InterfacesUI.APP_LOGO.resolveFor(actor).isVisible();
-        assertTrue(logoVisible, "El logo de la app no está visible");
-
-        // 3. Validar el megamenu usando la misma estructura
-        boolean menuVisible = InterfacesUI.BTN_MENU.resolveFor(actor).isVisible();
-        assertTrue(menuVisible, "El megamenu no está visible");
-
-        // 4. Finalmente, llamamos a la tarea que creamos arriba para comprar 1 producto aleatorio
-        actor.attemptsTo(
+        theActorInTheSpotlight().attemptsTo(
+                ValidarInterfaz.delInventario(),
                 AgregarProductoAleatorio.alCarrito()
         );
     }
