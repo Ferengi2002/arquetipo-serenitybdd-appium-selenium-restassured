@@ -38,8 +38,9 @@ public class saurcedemoStepDefinitions {
 
     @Cuando("el usuario ingresa sus credenciales válidas para acceder al sistema")
     public void accederAlSistema() {
+        theActorInTheSpotlight().whoCan(net.serenitybdd.screenplay.rest.abilities.CallAnApi.at(""));
         theActorInTheSpotlight().attemptsTo(
-                AccederSistema.logearse()
+                AccederSistemaApi.logearseYSetearCookie()
         );
     }
 
@@ -61,9 +62,10 @@ public class saurcedemoStepDefinitions {
     @Dado("que el {actor} ha accedido al sistema y seleccionado productos al azar")
     public void usuarioHaAccedidoYSeleccionadoProductos(Actor actor) {
 
+        actor.whoCan(net.serenitybdd.screenplay.rest.abilities.CallAnApi.at(""));
         actor.wasAbleTo(
                 NavigateTo.demoQaPage(),
-                AccederSistema.logearse(),
+                AccederSistemaApi.logearseYSetearCookie(),
                 AgregarProductoAleatorio.alCarrito()
         );
     }

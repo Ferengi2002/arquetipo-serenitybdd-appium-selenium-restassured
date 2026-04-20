@@ -39,8 +39,8 @@ public class CompletarCheckout implements Task {
                 WaitUntil.the(InterfacesUI.PUT_FIRST_NAME, isVisible()).forNoMoreThan(Duration.ofSeconds(10)),
 
                 // 4. Llenar datos
-                Enter.theValue("Carlos").into(InterfacesUI.PUT_FIRST_NAME),
-                Enter.theValue("Automatizador").into(InterfacesUI.PUT_LAST_NAME),
+                Enter.theValue("Juan").into(InterfacesUI.PUT_FIRST_NAME),
+                Enter.theValue("Dilan").into(InterfacesUI.PUT_LAST_NAME),
                 Enter.theValue("170101").into(InterfacesUI.PUT_POSTAL_CODE),
 
                 // 5. EL CAMBIO CLAVE: Scroll y Clic NORMAL en el botón de continuar
