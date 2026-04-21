@@ -40,6 +40,16 @@ public class InterfacesUI extends PageObject {
             .locatedBy("//button[text()='Add to cart']")
             .waitingForNoMoreThan(Duration.ofSeconds(10));
 
+    public static final Target BTN_REMOVE = Target
+            .the("Botón Remove de un producto agregado al carrito")
+            .locatedBy("//button[text()='Remove']")
+            .waitingForNoMoreThan(Duration.ofSeconds(10));
+
+    public static final Target LBL_CONTADOR_CARRITO = Target
+            .the("Contador (badge) del carrito de compras")
+            .locatedBy("//span[@class='shopping_cart_badge']")
+            .waitingForNoMoreThan(Duration.ofSeconds(10));
+
     // ==========================================
     // ELEMENTOS DEL FLUJO DE COMPRA (Nuevos)
     // ==========================================

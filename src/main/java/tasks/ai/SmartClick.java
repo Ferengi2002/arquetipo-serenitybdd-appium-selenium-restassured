@@ -24,33 +24,73 @@ public class SmartClick implements Interaction {
     @Override
     public <T extends Actor> void performAs(T actor) {
         WebDriver driver = BrowseTheWeb.as(actor).getDriver();
-        
+
         System.out.println("==================================================================");
         System.out.println("SmartAgent analizando la pantalla para encontrar: " + objetivo);
 
-        // Extraemos todos los elementos clickeables (botones, enlaces y submits) del DOM
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        String extractScript = "return Array.from(document.querySelectorAll('button, a, input[type=\"submit\"], input[type=\"button\"], div.cart_button, div.btn_action')).map(e => e.outerHTML).join('\\n');";
-        String htmlElements = (String) js.executeScript(extractScript);
+        // --- INTENTO CON IA ---
+        String xpath = intentarConIA(driver);
 
-        // Limitamos el texto por si es muy largo para la API
-        if (htmlElements.length() > 6000) {
-            htmlElements = htmlElements.substring(0, 6000);
+        // --- FALLBACK: si la IA no responde, generamos un XPath basado en el texto del objetivo ---
+        if (xpath == null || xpath.isEmpty()) {
+            xpath = generarFallbackXPath();
+            System.out.println("[FALLBACK] La IA no esta disponible. Usando XPath de respaldo: " + xpath);
         }
 
-        // Le preguntamos a la IA (Gemini) cuál es el XPath correcto
-        String xpath = SmartAgentAPI.getXPathFromAI(objetivo, htmlElements);
+        System.out.println("[RESULTADO] Ejecutando clic en: " + xpath);
+        System.out.println("==================================================================");
 
-        if (xpath != null && !xpath.isEmpty()) {
-            System.out.println("Ejecutando clic dinámico en el XPath devuelto...");
-            System.out.println("==================================================================");
-            
-            // Hacemos el clic inyectando el XPath que la IA encontró
-            actor.attemptsTo(
-                    Click.on(By.xpath(xpath))
-            );
-        } else {
-            throw new RuntimeException("La IA no pudo determinar el XPath para el objetivo: " + objetivo);
+        actor.attemptsTo(
+                Click.on(By.xpath(xpath))
+        );
+    }
+
+    private String intentarConIA(WebDriver driver) {
+        try {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            String extractScript = "return Array.from(document.querySelectorAll(" +
+                    "'button, a, input[type=\"submit\"], input[type=\"button\"], div.cart_button, div.btn_action'))" +
+                    ".map(e => e.outerHTML).join('\\n');";
+            String htmlElements = (String) js.executeScript(extractScript);
+
+            if (htmlElements == null || htmlElements.isEmpty()) return null;
+            if (htmlElements.length() > 6000) htmlElements = htmlElements.substring(0, 6000);
+
+            return SmartAgentAPI.getXPathFromAI(objetivo, htmlElements);
+        } catch (Exception e) {
+            System.out.println("[SmartClick] Error al consultar la IA: " + e.getMessage());
+            return null;
         }
+    }
+
+    /**
+     * Fallback: intenta construir un XPath a partir de palabras clave del objetivo.
+     * Detecta patrones comunes como "Finish", "Continue", "Submit", etc.
+     */
+    private String generarFallbackXPath() {
+        String objetivoLower = objetivo.toLowerCase();
+
+        // Detectar palabras clave conocidas en el objetivo
+        if (objetivoLower.contains("finish") || objetivoLower.contains("finalizar")) {
+            return "//button[@data-test='finish']";
+        }
+        if (objetivoLower.contains("continue") || objetivoLower.contains("continuar")) {
+            return "//input[@data-test='continue']";
+        }
+        if (objetivoLower.contains("checkout")) {
+            return "//button[@data-test='checkout']";
+        }
+        if (objetivoLower.contains("cart") || objetivoLower.contains("carrito")) {
+            return "//a[@class='shopping_cart_link']";
+        }
+        if (objetivoLower.contains("login") || objetivoLower.contains("acceder")) {
+            return "//input[@id='login-button']";
+        }
+
+        // Fallback ultimo recurso: busca un boton cuyo texto contenga la ultima palabra del objetivo
+        String[] palabras = objetivo.split(" ");
+        String ultimaPalabra = palabras[palabras.length - 1].replace(",", "").replace(".", "");
+        return "//button[contains(translate(., 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'), '"
+                + ultimaPalabra.toUpperCase() + "')]";
     }
 }

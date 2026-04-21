@@ -45,3 +45,6 @@ bin/
 
 ### Evidencias de Ejecucion ###
 Evidencias/
+
+### Variables de entorno y secretos (NUNCA subir al repo) ###
+.env
