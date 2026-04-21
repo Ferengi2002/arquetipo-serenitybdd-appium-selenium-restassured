@@ -44,7 +44,7 @@ public class InterfacesUI extends PageObject {
     // ELEMENTOS DEL FLUJO DE COMPRA (Nuevos)
     // ==========================================
 
-    // --- Ícono del Carrito ---
+    // --- Icono del Carrito ---
     public static final Target BTN_CARRITO = Target
             .the("Icono del carrito de compras")
             .locatedBy("//a[@class='shopping_cart_link']")

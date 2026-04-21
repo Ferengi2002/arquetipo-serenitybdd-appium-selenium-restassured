@@ -36,7 +36,7 @@ public class saurcedemoStepDefinitions {
         actor.wasAbleTo(NavigateTo.demoQaPage());
     }
 
-    @Cuando("el usuario ingresa sus credenciales válidas para acceder al sistema")
+    @Cuando("el usuario ingresa sus credenciales validas para acceder al sistema")
     public void accederAlSistema() {
         theActorInTheSpotlight().whoCan(net.serenitybdd.screenplay.rest.abilities.CallAnApi.at(""));
         theActorInTheSpotlight().attemptsTo(
