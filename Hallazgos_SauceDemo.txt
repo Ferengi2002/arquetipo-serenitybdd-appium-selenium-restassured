@@ -1,0 +1,24 @@
+REPORTE DE HALLAZGOS E INCONVENIENTES EN LA AUTOMATIZACIÓN (SAUCEDEMO.COM)
+Fecha de reporte: 21 de Abril de 2026
+
+Durante el proceso de diseño y construcción de la automatización de pruebas para la plataforma saucedemo.com (utilizando Serenity BDD, Screenplay, Selenium y Cucumber), se identificaron los siguientes hallazgos técnicos e inconvenientes en el flujo de trabajo:
+
+1. Bloqueo por notificaciones nativas del navegador (Migración de Chrome a Edge)
+-----------------------------------------------------------------------------------
+- Inconveniente: Al ejecutar las pruebas inicialmente en Google Chrome, el navegador lanzaba un pop-up nativo de "Guardar contraseña" y el de "Cambiar contraseña por ser insegura" tras realizar el inicio de sesión. Esta alerta del sistema operativo se superponía sobre el DOM, interceptando los clics posteriores de Selenium y rompiendo el flujo de automatización de la compra.
+- Solución adoptada: Se tomó la decisión técnica de migrar la ejecución al navegador Microsoft Edge (`webdriver.edge.driver`). Se configuraron las "Capabilities" (`ms:edgeOptions`) para inhabilitar agresivamente barras de información, pop-ups y burbujas de guardado de contraseñas, permitiendo que la automatización fluya sin interrupciones en la UI.
+
+2. Ausencia de API pública de SauceDemo e Inyección de Cookies
+-----------------------------------------------------------------------------------
+- Inconveniente: El sitio web de SauceDemo.com carece de una API REST expuesta que permita realizar inicio de sesión directo vía backend. Sin embargo, el arquetipo requería demostrar el uso de automatización a nivel de API.
+- Solución adoptada: Se adaptó el framework para trabajar de forma híbrida. Dado que no podíamos usar una API real de SauceDemo ni ocupamos el backend de Demoblaze, se utilizó un servicio de pruebas público (`httpbin.org/post`) para simular exitosamente la petición POST de inicio de sesión, cumpliendo el requisito técnico de consumo de APIs. Luego, para enlazarlo con la UI de SauceDemo, se inyectó directamente la cookie de sesión (`session-username`) en el navegador de Selenium, saltando por completo la pantalla gráfica de Login y entrando directo al inventario.
+
+3. Conflictos de codificación de caracteres en Windows (Encoding Mismatch)
+-----------------------------------------------------------------------------------
+- Inconveniente: Durante las fases de compilación del proyecto de Gradle y el emparejamiento de pasos en Cucumber, se presentaron errores críticos (`unmappable character` y `UndefinedStepException`). La causa raíz fue el uso de tildes (como en la palabra "válidas" o "Ícono") que entraban en conflicto entre el estándar UTF-8 de los archivos `.feature` y la codificación local Windows-1252 de la consola.
+- Solución adoptada: Se llevó a cabo una estandarización de nombrado en los archivos `.feature` y en las clases de Java, eliminando tildes y caracteres especiales. Esto garantizó que Cucumber pudiese interpretar los pasos sin importar el sistema operativo.
+
+4. Generación y captura de evidencias locales
+-----------------------------------------------------------------------------------
+- Inconveniente: La ejecución tradicional por consola no generaba un historial persistente de los logs, y al usar comandos clásicos de PowerShell, los outputs directos de Gradle se perdían o no se guardaban correctamente en un archivo.
+- Solución adoptada: Se desarrolló un script a medida (`ejecutar_pruebas.ps1`) para automatizar el encapsulamiento de cada ejecución. Este script incluye una captura robusta mediante `Tee-Object` y acopla los reportes HTML gráficos generados por Serenity en carpetas ordenadas por fecha y hora (`Evidencias\Ejecucion_YYYYMMDD_HHMMSS`), las cuales además fueron excluidas en el `.gitignore` para no subir basura al control de versiones.

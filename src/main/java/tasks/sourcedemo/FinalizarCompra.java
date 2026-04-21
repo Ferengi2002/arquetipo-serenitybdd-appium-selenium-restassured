@@ -19,8 +19,8 @@ public class FinalizarCompra implements Task {
     public <T extends Actor> void performAs(T actor) {
 
         actor.attemptsTo(
-                // 1. Clic en el botón Finish
-                Click.on(InterfacesUI.BTN_FINISH),
+                // 1. IA: SmartClick buscará el botón Finish analizando el HTML dinámicamente con Gemini
+                tasks.ai.SmartClick.on("el botón para finalizar o completar la compra, llamado Finish"),
 
                 // 2. Validación de oro: Comprobar que salió el mensaje de éxito
                 Ensure.that(InterfacesUI.LBL_MENSAJE_EXITO)

@@ -1,3 +1,5 @@
+$env:GEMINI_API_KEY = "AIzaSyAedJbFskKhZdF3yCe9XPr2b769Jl6XUAQ"
+
 $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
 $carpetaEvidencia = "Evidencias\Ejecucion_$timestamp"
 
